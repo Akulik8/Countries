@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="15dp"
     android:orientation="horizontal">
 
     <ImageView
@@ -10,14 +12,16 @@
         android:layout_height="85dp"
         android:layout_gravity="center"
         android:scaleType="fitXY"
-        android:layout_marginStart="10dp" />
+        android:layout_marginStart="10dp"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="40dp"
+        android:padding="32dp"
         android:textColor="@color/black"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textSize="16sp" />
 </LinearLayout>
