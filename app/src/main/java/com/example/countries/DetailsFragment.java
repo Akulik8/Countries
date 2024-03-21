@@ -27,16 +27,22 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
-        DetailsViewModel detailsViewModel = new ViewModelProvider(requireActivity()).get(DetailsViewModel.class);
-        detailsViewModel.getSelectedCountry().observe(getViewLifecycleOwner(), new Observer<Country>() {
+        TextView countryText = view.findViewById(R.id.nameTextView);
+        TextView capitalText = view.findViewById(R.id.capitalTextView);
+        TextView squareText = view.findViewById(R.id.areaTextView);
+        ImageView flag = view.findViewById(R.id.flagImageView);
+        Bundle args = getArguments();
+        if (args != null) {
+            String countryName = args.getString("countryName");
+            String capitalName = args.getString("capitalName");
+            int area = args.getInt("area");
+            int flagId = args.getInt("flagId");
 
-            @Override
-            public void onChanged(Country country) {
-                if (country != null) {
-                    displayCountry(view, country);
-                }
-            }
-        });
+            countryText.setText(countryName);
+            capitalText.setText("Столица: " + capitalName);
+            squareText.setText("Площадь: " + area);
+            flag.setImageResource(flagId);
+        }
 
         return view;
     }

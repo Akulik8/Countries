@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CountriesViewModel extends ViewModel {
     public MutableLiveData<List<Country>> countries = new MutableLiveData<>();
+    private MutableLiveData<Country> selectedCountry = new MutableLiveData<>();
     public CountriesViewModel() {
         List<Country> countriesList = new ArrayList<>();
         countriesList.add(new Country("Россия", R.drawable.rus, "Москва", 17100000));
@@ -25,5 +26,9 @@ public class CountriesViewModel extends ViewModel {
     }
     public LiveData<List<Country>> getCountries() {
         return countries;
+    }
+    public LiveData<Country> getSelectedCountry() { return selectedCountry; }
+    public void setSelectedCountry(Country country) {
+        selectedCountry.setValue(country);
     }
 }
