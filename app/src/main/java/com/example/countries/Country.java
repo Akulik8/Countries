@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public class Country implements Serializable {
     private String name;
-    private int flagId;
+    private String urlFlag;
     private String capital;
-    private int area;
+    private Integer area;
 
-    public Country(String name, int flagId, String capital, int area) {
+    public Country(String name, String urlFlag, String capital, Integer area) {
         this.name = name;
-        this.flagId = flagId;
+        this.urlFlag = urlFlag;
         this.capital = capital;
         this.area = area;
     }
@@ -19,15 +19,15 @@ public class Country implements Serializable {
         return name;
     }
 
-    public int getFlagId() {
-        return flagId;
+    public String geturlFlag() {
+        return urlFlag;
     }
 
     public String getCapital() {
         return capital;
     }
 
-    public int getArea() {
+    public Integer getArea() {
         return area;
     }
 }
