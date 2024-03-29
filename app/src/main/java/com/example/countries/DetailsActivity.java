@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+
 public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +23,16 @@ public class DetailsActivity extends AppCompatActivity {
             TextView capitalTextView = findViewById(R.id.capitalTextView);
             TextView areaTextView = findViewById(R.id.areaTextView);
             ImageView flagImageView = findViewById(R.id.flagImageView);
+            TextView populatioonTextView = findViewById(R.id.populationTextView);
 
             nameTextView.setText(country.getName());
-            capitalTextView.setText(country.getCapital());
+            capitalTextView.setText("Столица: " + country.getCapital());
             areaTextView.setText("Площадь: " + country.getArea() + " кв. км");
-            flagImageView.setImageResource(country.getFlagId());
+            populatioonTextView.setText("Население: " + country.getPopulation() + " человек");
+
+            Glide.with(this)
+                    .load(country.getFlags().png)
+                    .into(flagImageView);
         }
     }
 }

@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class CountryAdapter extends BaseAdapter {
@@ -41,6 +43,7 @@ public class CountryAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
+        Country country = countries.get(position);
         if (view == null) {
             view = inflater.inflate(R.layout.list_item, parent, false);
         }
@@ -48,39 +51,11 @@ public class CountryAdapter extends BaseAdapter {
         TextView countryName = view.findViewById(R.id.textView);
         ImageView flagImage = view.findViewById(R.id.icon);
 
-        Country country = countries.get(position);
+        Glide.with(context)
+                .load(country.getFlags().png)
+                .into(flagImage);
+
         countryName.setText(country.getName());
-        Bitmap compressedBitmap = compressBitmap(country.getFlagId(), 140, 85);
-        flagImage.setImageBitmap(compressedBitmap);
-
         return view;
-    }
-
-    private Bitmap compressBitmap(int resourceId, int reqWidth, int reqHeight) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-    }
-
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 }

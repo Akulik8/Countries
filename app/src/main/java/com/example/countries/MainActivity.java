@@ -7,34 +7,58 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
+public class MainActivity extends AppCompatActivity {
+    private Retrofit retrofit;
+    private CountryApi api;
+    private ListView listView;
+    private CountryAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = findViewById(R.id.listView);
+        String baseUrl = "https://restcountries.com/v3.1/";
 
-        List<Country> countries = new ArrayList<>();
-        countries.add(new Country("Россия", R.drawable.rus, "Москва", 17100000));
-        countries.add(new Country("США", R.drawable.usa, "Вашингтон", 9834000));
-        countries.add(new Country("Германия", R.drawable.germany, "Берлин", 357592));
-        countries.add(new Country("Китай", R.drawable.china, "Пекин", 9597000));
-        countries.add(new Country("Молдова", R.drawable.moldova, "Кишинёв", 33846));
-        countries.add(new Country("Аргентина", R.drawable.argentina, "Буэнос-Айрес", 2780000));
-        countries.add(new Country("Франция", R.drawable.france, "Париж", 643801));
-        countries.add(new Country("Италия", R.drawable.italy, "Рим", 302073));
-        countries.add(new Country("Бразилия", R.drawable.brazil, "Бразилиа", 8510000));
-        countries.add(new Country("Канада", R.drawable.canada, "Оттава", 9985000));
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        api = retrofit.create(CountryApi.class);
 
-        CountryAdapter countryAdapter = new CountryAdapter(getApplicationContext(), countries);
-        listView.setAdapter(countryAdapter);
+        listView = findViewById(R.id.listView);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Call<List<Country>> call = api.getAllCountry();
+        call.enqueue(new Callback<List<Country>>() {
+            @Override
+            public void onResponse(Call<List<Country>> call, Response<List<Country>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Ошибка: " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<Country> countries = response.body();
+                adapter = new CountryAdapter(MainActivity.this, countries);
+                listView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Country>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+       /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Country country = countries.get(position);
@@ -42,7 +66,36 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("country", country);
                 startActivity(intent);
             }
+        });*/
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Country country = (Country) adapter.getItem(position);
+
+                Call<Country> call = api.getCountry(country.code);
+                call.enqueue(new Callback<Country>() {
+                    @Override
+                    public void onResponse(Call<Country> call, Response<Country> response) {
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(MainActivity.this, "Ошибка: " + response.code(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Country detailedCountry = response.body();
+                        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                        intent.putExtra("country", detailedCountry);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Country> call, Throwable t) {
+                        Toast.makeText(MainActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
+
 
     }
 
